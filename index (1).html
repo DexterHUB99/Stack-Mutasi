@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kalkulator Mutasi – Steal An Egg</title>
+<style>
+:root{--bg:#0e0b1f;--card:#1a1536;--card2:#241d4a;--text:#f3f0ff;--mut:#a79fd0;--acc:#8b5cf6;--acc2:#22d3ee;--line:#352c68;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f4f1ff;--card:#fff;--card2:#ece7ff;--text:#1d1640;--mut:#6b629c;--line:#d9d1fb}}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:20px}
+h1{font-size:1.6rem;margin:8px 0 4px;background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mut);margin:0;font-size:.92rem}
+.lang{display:flex;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:3px;gap:2px;flex-shrink:0;margin-top:8px}
+.lang button{border:0;background:transparent;color:var(--mut);padding:6px 11px;border-radius:9px;font-weight:800;font-size:.8rem;cursor:pointer}
+.lang button.on{background:linear-gradient(135deg,var(--acc),#6366f1);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
+.lbl{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:8px;display:block}
+.row{display:flex;gap:8px}
+input,select{background:var(--card2);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:1.05rem;width:100%;outline:none}
+input:focus,select:focus{border-color:var(--acc)}
+select{width:auto;min-width:110px}
+.tabs{display:flex;background:var(--card2);border-radius:14px;padding:4px;gap:4px}
+.tab{flex:1;border:0;background:transparent;color:var(--mut);padding:10px;border-radius:10px;font-weight:700;font-size:.95rem;cursor:pointer}
+.tab.on{background:linear-gradient(135deg,var(--acc),#6366f1);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
+.chip{position:relative;display:flex;align-items:center;gap:10px;text-align:left;border:2px solid var(--line);background:var(--card2);color:var(--text);border-radius:14px;padding:10px;cursor:pointer;transition:.15s;font:inherit}
+.chip:active{transform:scale(.97)}
+.ico{width:44px;height:44px;flex-shrink:0;border-radius:10px;object-fit:contain;background:rgba(255,255,255,.06)}
+.dot{width:44px;height:44px;flex-shrink:0;border-radius:10px;background:var(--c);opacity:.35}
+.chip .t{min-width:0}
+.chip .n{font-weight:800;font-size:.98rem;display:block}
+.chip .m{font-size:.85rem;color:var(--mut)}
+.chip .s{font-size:.68rem;color:var(--mut);display:block;margin-top:2px;line-height:1.25}
+.chip.on{border-color:var(--c);box-shadow:0 0 0 1px var(--c),0 4px 18px -6px var(--c)}
+.chip .ord{position:absolute;top:6px;right:6px;background:var(--c);color:#000;font-weight:800;font-size:.7rem;border-radius:99px;min-width:20px;height:20px;display:none;align-items:center;justify-content:center;padding:0 5px}
+.chip.on .ord{display:flex}
+.result{background:linear-gradient(135deg,#6d28d9,#0891b2);border:0;color:#fff;text-align:center}
+.result .big{font-size:2.3rem;font-weight:900;margin:4px 0;word-break:break-word}
+.result .small{opacity:.85;font-size:.88rem}
+.steps{font-size:.92rem;line-height:1.7}
+.steps .ln{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--line);padding:6px 0}
+.steps .ln:last-child{border:0}
+.steps b{white-space:nowrap}
+.tot{font-weight:800;color:var(--acc2)}
+.btn{background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:10px;padding:6px 12px;cursor:pointer;font-size:.8rem}
+.hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.empty{color:var(--mut);text-align:center;padding:8px}
+.note{font-size:.8rem;color:var(--mut);margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>🥚 Kalkulator Mutasi</h1>
+      <p class="sub" data-t="sub"></p>
+    </div>
+    <div class="lang">
+      <button data-lang="id">ID</button>
+      <button data-lang="en">EN</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="lbl" data-t="base"></span>
+    <div class="row">
+      <input id="base" type="number" inputmode="decimal" min="0" step="any" value="19">
+      <select id="unit">
+        <option value="0"></option>
+        <option value="1" selected></option>
+        <option value="2"></option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="hd"><span class="lbl" style="margin:0" data-t="pick"></span><button class="btn" id="reset" data-t="reset"></button></div>
+    <div class="grid" id="grid"></div>
+    <div class="note" data-t="tip"></div>
+  </div>
+
+  <div class="card result">
+    <span class="small" data-t="final"></span>
+    <div class="big" id="final">–</div>
+    <div class="small" id="mult"></div>
+  </div>
+
+  <div class="card">
+    <span class="lbl" data-t="steps"></span>
+    <div class="tabs" style="margin-bottom:6px">
+      <button class="tab on" data-mode="ren" data-t="m1"></button>
+      <button class="tab" data-mode="riss" data-t="m2"></button>
+    </div>
+    <div class="note" id="modeNote" style="margin:0 0 10px"></div>
+    <div class="steps" id="steps"></div>
+  </div>
+</div>
+
+<script>
+const I={
+ id:{sub:"Steal An Egg · Stack Mutasi",base:"Base $p/s",pick:"Pilih mutasi",reset:"Reset",
+  tip:"Tap untuk pilih/batal. Angka di pojok = urutan pilih.",final:"Nilai akhir",steps:"Rincian langkah",
+  m1:"Cara 1",m2:"Cara 2",
+  n1:"Hasil kedua cara selalu sama. Cara 1: hitung bonus tiap mutasi (base × multiplier − base), jumlahkan, lalu tambah base sekali.",
+  n2:"Hasil kedua cara selalu sama. Cara 2: multiplier pertama utuh, mutasi berikutnya dikurangi 1, jumlahkan, lalu kali base.",
+  none:"Belum ada mutasi dipilih",empty:"Pilih minimal 1 mutasi dulu 👆",eff:"Total multiplier efektif",cnt:"mutasi",
+  bp:"Base pet",total:"Total",whole:"utuh",sum:"Jumlah multiplier",u:["Juta","Miliar","Triliun"],loc:"id-ID"},
+ en:{sub:"Steal An Egg · Stack Mutations",base:"Base $p/s",pick:"Pick mutations",reset:"Reset",
+  tip:"Tap to select/deselect. The badge shows pick order.",final:"Final value",steps:"Step-by-step",
+  m1:"Method 1",m2:"Method 2",
+  n1:"Both methods always give the same result. Method 1: compute each mutation’s bonus (base × multiplier − base), add them up, then add the base once.",
+  n2:"Both methods always give the same result. Method 2: the first multiplier stays whole, each next one is reduced by 1, add them up, then multiply by base.",
+  none:"No mutation selected yet",empty:"Pick at least 1 mutation 👆",eff:"Effective total multiplier",cnt:"mutations",
+  bp:"Base pet",total:"Total",whole:"full",sum:"Multiplier sum",u:["Million","Billion","Trillion"],loc:"en-US"}
+};
+/* icon = file name in the same folder as index.html */
+const MUT=[
+ {n:"Silver",m:1.20,c:"#cbd5e1",f:"Silver.webp",s:{id:"Hatching Egg",en:"Hatching Egg"}},
+ {n:"Bloom",m:1.25,c:"#f472b6",f:"Sakura.webp",s:{id:"Mesin Inkubator",en:"Incubator Machine"}},
+ {n:"Golden",m:2.50,c:"#facc15",f:"Golden.webp",s:{id:"Hatching Egg",en:"Hatching Egg"}},
+ {n:"Spirit Bloom",m:2.50,c:"#2dd4bf",f:"Great Bloom.webp",s:{id:"Mesin Inkubator",en:"Incubator Machine"}},
+ {n:"Fractured",m:2.75,c:"#c084fc",f:"Fractured.webp",s:{id:"Dari Shard",en:"From Shard"}},
+ {n:"Scramble",m:2.75,c:"#84cc16",f:"Scrambled.webp",s:{id:"Dr. Scramble’s Shop",en:"Dr. Scramble’s Shop"}},
+ {n:"Nitro",m:2.75,c:"#fb923c",f:"Nitro.webp",s:{id:"Racing Shop",en:"Racing Shop"}},
+ {n:"Spectral",m:2.75,c:"#22d3ee",f:"Spectral.png",s:{id:"Spectral Shard (Halloween)",en:"Spectral Shard (Halloween)"}},
+ {n:"Enchanted",m:2.85,c:"#fde047",f:"Enchanted.webp",s:{id:"Craft Altar Enchanted Forest",en:"Craft Altar Enchanted Forest"}},
+ {n:"Parasite",m:3.00,c:"#a78bfa",f:"Parasite.webp",s:{id:"Parasite Event",en:"Parasite Event"}},
+ {n:"Rainbow",m:3.50,c:"#f43f5e",f:"Rainbow.webp",s:{id:"Hatching Egg",en:"Hatching Egg"}}
+];
+const $=id=>document.getElementById(id);
+let mode="ren",sel=[],lang="id";
+try{const sv=localStorage.getItem("lang");lang=sv||((navigator.language||"id").toLowerCase().startsWith("id")?"id":"en")}catch(e){lang=(navigator.language||"id").toLowerCase().startsWith("id")?"id":"en"}
+const T=()=>I[lang];
+const fmt=(v,d=4)=>(Math.round(v*1e6)/1e6).toLocaleString(T().loc,{maximumFractionDigits:d});
+
+function grid(){
+  $("grid").innerHTML=MUT.map((x,i)=>`<button class="chip" data-i="${i}" style="--c:${x.c}">
+    <span class="ord"></span>
+    <img class="ico" src="${encodeURI(x.f)}" alt="${x.n}" loading="lazy">
+    <span class="t"><span class="n" style="color:${x.c}">${x.n}</span>
+    <span class="m">×${fmt(x.m,2)}</span><span class="s" data-i="${i}"></span></span></button>`).join("");
+  document.querySelectorAll(".ico").forEach(im=>{
+    im.onerror=()=>{const d=document.createElement("span");d.className="dot";d.style.setProperty("--c",im.closest(".chip").style.getPropertyValue("--c"));im.replaceWith(d)};
+  });
+}
+function applyLang(){
+  const t=T();
+  document.documentElement.lang=lang;
+  document.querySelectorAll("[data-t]").forEach(el=>el.textContent=t[el.dataset.t]);
+  document.querySelectorAll(".lang button").forEach(b=>b.classList.toggle("on",b.dataset.lang===lang));
+  [...$("unit").options].forEach((o,k)=>o.textContent=t.u[k]);
+  document.querySelectorAll(".chip .s").forEach(el=>el.textContent=MUT[+el.dataset.i].s[lang]);
+  document.querySelectorAll(".chip .m").forEach((el,i)=>el.textContent="×"+fmt(MUT[i].m,2));
+  render();
+}
+function render(){
+  const t=T();
+  document.querySelectorAll(".chip").forEach(el=>{
+    const i=+el.dataset.i,p=sel.indexOf(i);
+    el.classList.toggle("on",p>-1);
+    el.querySelector(".ord").textContent=p+1;
+  });
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on",b.dataset.mode===mode));
+  $("modeNote").textContent=mode==="ren"?t.n1:t.n2;
+  const base=parseFloat($("base").value)||0,u=t.u[+$("unit").value];
+  if(!sel.length){
+    $("final").textContent=base?fmt(base)+" "+u:"–";
+    $("mult").textContent=t.none;
+    $("steps").innerHTML=`<div class="empty">${t.empty}</div>`;
+    return;
+  }
+  const ms=sel.map(i=>MUT[i]);
+  let html="",total,eff;
+  if(mode==="ren"){
+    let sum=base;
+    html+=`<div class="ln"><span>${t.bp}</span><b>${fmt(base)}</b></div>`;
+    ms.forEach(x=>{
+      const v=base*x.m,b=v-base;sum+=b;
+      html+=`<div class="ln"><span>${x.n}: ${fmt(base)} × ${fmt(x.m,2)} = ${fmt(v)} − ${fmt(base)}</span><b>+${fmt(b)}</b></div>`;
+    });
+    total=sum;eff=total/(base||1);
+    html+=`<div class="ln tot"><span>${t.total}</span><b>${fmt(total)} ${u}</b></div>`;
+  }else{
+    let s=0;
+    ms.forEach((x,k)=>{
+      const e=k===0?x.m:x.m-1;s+=e;
+      html+=`<div class="ln"><span>${k+1}. ${x.n}${k===0?" ("+t.whole+")":" ("+fmt(x.m,2)+" − 1)"}</span><b>${fmt(e,2)}</b></div>`;
+    });
+    html+=`<div class="ln"><span>${t.sum}</span><b>${fmt(s,2)}</b></div>`;
+    total=base*s;eff=s;
+    html+=`<div class="ln tot"><span>${fmt(base)} × ${fmt(s,2)}</span><b>${fmt(total)} ${u}</b></div>`;
+  }
+  $("final").textContent=fmt(total)+" "+u;
+  $("mult").textContent=t.eff+" ×"+fmt(eff,2)+" · "+sel.length+" "+t.cnt;
+  $("steps").innerHTML=html;
+}
+grid();
+$("grid").addEventListener("click",e=>{
+  const c=e.target.closest(".chip");if(!c)return;
+  const i=+c.dataset.i,p=sel.indexOf(i);
+  p>-1?sel.splice(p,1):sel.push(i);render();
+});
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{mode=b.dataset.mode;render()});
+document.querySelectorAll(".lang button").forEach(b=>b.onclick=()=>{
+  lang=b.dataset.lang;try{localStorage.setItem("lang",lang)}catch(e){}applyLang();
+});
+$("base").oninput=render;$("unit").onchange=render;
+$("reset").onclick=()=>{sel=[];render()};
+applyLang();
+</script>
+</body>
+</html>
